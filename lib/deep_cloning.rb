@@ -27,10 +27,10 @@ module DeepCloning
   #
   # ==== Cloning really deep with multiple associations
   #   pirate.clone :include => [:mateys, {:treasures => :gold_pieces}]
-  # 
+  #
   def clone_with_deep_cloning options = {}
     kopy = clone_without_deep_cloning
-    
+
     if options[:except]
       Array(options[:except]).each do |attribute|
         kopy.write_attribute(attribute, attributes_from_column_definition[attribute.to_s])
@@ -44,11 +44,16 @@ module DeepCloning
           association = association.keys.first
         end
         opts = deep_associations.blank? ? {} : {:include => deep_associations}
+        fk = self.class.reflect_on_association(association).options[:foreign_key]
+       
         cloned_object = case self.class.reflect_on_association(association).macro
                         when :belongs_to, :has_one
                           self.send(association) && self.send(association).clone(opts)
                         when :has_many, :has_and_belongs_to_many
-                          self.send(association).collect { |obj| obj.clone(opts) }
+                          self.send(association).collect { |obj| tmp = obj.clone(opts)
+                                                                 tmp.send("#{fk}=", kopy)
+                                                                 tmp
+                                                          }
                         end
         kopy.send("#{association}=", cloned_object)
       end
