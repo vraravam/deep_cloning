@@ -1,8 +1,17 @@
 ActiveRecord::Schema.define(:version => 1) do
+  create_table :pirates_unions, :force => true do |t|
+    t.column :name, :string
+  end
+  
   create_table :pirates, :force => true do |t|
     t.column :name, :string
     t.column :nick_name, :string, :default => 'no nickname'
     t.column :age, :string
+  end
+
+  create_table :pirates_pirates_unions, :id => false, :force => true do |t|
+    t.column :pirate_id, :integer
+    t.column :pirates_union_id, :integer
   end
   
   create_table :parrots, :force => true do |t|

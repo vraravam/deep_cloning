@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/test_helper'
 
 class DeepCloningTest < Test::Unit::TestCase
-  fixtures :pirates, :gold_pieces, :treasures, :mateys, :parrots
+  fixtures :pirates, :pirates_unions, :gold_pieces, :treasures, :mateys, :parrots
 
   def setup
     @jack = Pirate.find(pirates(:jack).id)
@@ -64,5 +64,15 @@ class DeepCloningTest < Test::Unit::TestCase
     clone = @jack.clone(:include => :parrot)
     assert clone.save
     assert_not_equal clone.parrot, @jack.parrot
+  end
+
+  def test_deep_with_only_association_cloned_instead_of_actual_object
+    pirate_union = PiratesUnion.find(:first)
+    @jack.pirates_unions << pirate_union
+    original_pirates_unions_count = PiratesUnion.count
+    clone = @jack.clone(:include_association => :pirates_unions)
+    assert clone.save
+    assert_equal clone.pirates_unions, @jack.pirates_unions
+    assert_equal original_pirates_unions_count, PiratesUnion.count
   end
 end

@@ -26,3 +26,10 @@ Install with:
 === Cloning really deep with multiple associations
    pirate.clone :include => [:mateys, {:treasures => :gold_pieces}]
 Copyright (c) 2008 Jan De Poorter, released under the MIT license
+
+
+==============================================================================
+Changes made by Blackbox team members
+Hicran Palmer, Vijay Aravamudhan on Apr 29, 2009
+=== Cloning multiple associations - but only the join table entries without cloning the associated objects themselves
+   pirate.clone :include_association => [:matey_ids, :treasure_ids]
